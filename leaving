@@ -1,0 +1,56 @@
+#!/usr/bin/python
+
+from urllib2 import Request, urlopen, URLError
+import xml.etree.ElementTree as ET
+import ConfigParser
+
+config = ConfigParser.RawConfigParser()
+config.read('cta.cfg')
+
+api_key = config.get('Options','api_key')
+
+DEBUG=False
+
+def getTimes(stop, bus=None):
+	request = "http://www.ctabustracker.com/bustime/api/v1/getpredictions?key=%s&rt=%s&stpid=%s" % (api_key,bus,stop)
+
+	try:
+		response = urlopen(request)
+		xml_response = response.read()
+		root = ET.fromstring(xml_response)
+	except URLError, e:
+		print 'API error: Error code:', e
+
+	if DEBUG:
+		print "---"
+		ET.dump(root)
+		print "---"
+
+
+	#bustime-response
+	prdtms = []
+	for atype in root.findall('prd'):
+		#print "Found a bus"
+		#ET.dump(atype)
+		prdtms.append( atype.find('prdtm').text)
+
+	return prdtms
+
+
+
+the_156 = getTimes(14461,156)
+the_134 = getTimes(6711,134)
+
+busses=[ {'bus':156,'stop':14461}, {'bus':134,'stop':6711}]
+
+for bus_stop in busses:
+	bus = bus_stop['bus']
+	stop = bus_stop['stop']
+	prdtms = getTimes(stop,bus)
+	if (len(prdtms) > 0):
+		print "The %s's will arrive at the following time(s):"%bus
+		for prdtm in prdtms:
+			print prdtm
+	else:
+		print "No %s's coming anytime soon"%bus
+	print "---"
