@@ -3,6 +3,8 @@
 from urllib2 import Request, urlopen, URLError
 import xml.etree.ElementTree as ET
 import ConfigParser
+from datetime import datetime
+
 
 config = ConfigParser.RawConfigParser()
 config.read('cta.cfg')
@@ -36,8 +38,29 @@ def getTimes(stop, bus=None):
 
 	return prdtms
 
+def timeTilDepart(prdtm):
+	pieces = prdtm.split(" ")
+	time = pieces[1]
 
+	(hour, minute) = time.split(":")
+	hour = int(hour)
+	minute = int(minute)
 
+	now = datetime.now()
+
+	c_hour = now.hour
+	c_minute = now.minute
+
+	if ( c_hour == hour):
+		ttd =  minute - c_minute
+	else:
+		ttd =  (minute + 60) - c_minute
+
+	if ttd < 2:
+		return "Due"
+	else:
+		return ttd
+	
 the_156 = getTimes(14461,156)
 the_134 = getTimes(6711,134)
 
@@ -50,7 +73,8 @@ for bus_stop in busses:
 	if (len(prdtms) > 0):
 		print "The %s's will arrive at the following time(s):"%bus
 		for prdtm in prdtms:
-			print prdtm
+			ttd = timeTilDepart(prdtm)
+			print "%s minutes (%s)" % (ttd, prdtm)
 	else:
 		print "No %s's coming anytime soon"%bus
 	print "---"
