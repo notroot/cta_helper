@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<h3>Upcoming Busses</h3>
+<table>
+	<tr class=header><td>Bus</td><td>Stop</td><td>Minutes</td><td>Time</td> </tr>
+	{% for bus_stop in results %}
+		{% for prdtm in bus_stop.prdtms %}		
+			<tr>
+				<td>{{ bus_stop.bus }}</td>
+				<td>{{ bus_stop.stop }}</td>
+				<td>{{ prdtm.minutes }}</td>
+				<td>{{ prdtm.prdtm }}</td>
+			</tr>
+		{% endfor %}
+	{% endfor %}
+</table>
+{% endblock main %}
