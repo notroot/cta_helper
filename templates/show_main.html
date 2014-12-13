@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 
 {% block main %}
-<h3>Time is {{current_time}}</h3>
+<strong>Time is {{current_time}}</strong>
 	{% for bus_stop in results %}
-	<table>
+	<table class="table">
 		<thead>
 			<tr>
 				<th colspan=2>{{ bus_stop.bus }} {{ bus_stop.name }} {{ bus_stop.direction }}</th>
