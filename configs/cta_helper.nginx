@@ -1,0 +1,47 @@
+upstream app_server {
+	server 127.0.0.1:8005;
+}
+
+server {
+	listen 80;
+	#listen [::]:80 default_server ipv6only=on;
+
+	root /usr/share/nginx/html;
+	index index.html index.htm;
+
+	# Make site accessible from http://localhost/
+	server_name cta.jimlester.net;
+
+	location ^~ /static/ {
+		root /usr/share/nginx/cta_helper;
+	}
+
+	location = /favicon.ico {
+		return 204;
+		access_log     off;
+		log_not_found  off;
+	}
+
+	location / {
+		try_files $uri @gunicorn_proxy;
+	}
+
+	location @gunicorn_proxy {
+		proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
+		proxy_set_header   X-Forwarded-Host $server_name;
+		proxy_set_header Host $host;
+		proxy_redirect off;
+		proxy_pass http://127.0.0.1:8005;
+	}
+
+	access_log /var/log/nginx/cta_helper-access.log;
+        error_log /var/log/nginx/cta_helper-error.log;
+
+
+	# deny access to .htaccess files, if Apache's document root
+	# concurs with nginx's one
+	#
+	#location ~ /\.ht {
+	#	deny all;
+	#}
+}
