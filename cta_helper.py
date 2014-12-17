@@ -21,7 +21,8 @@ app.config.update(dict(
 config = ConfigParser.RawConfigParser()
 config.read('cta.cfg')
 
-api_key = config.get('Options','api_key')
+bus_api_key = config.get('Options','bus_api_key')
+train_api_key = config.get('Options','train_api_key')
 
 #DEBUG=False
 
@@ -38,13 +39,13 @@ class BussStop(object):
 		return '{} - {}, {}'.format(self.name, self.bus, self.stop_id)
 
 
-def getTimes(buss_stop):
+def getBusTimes(buss_stop):
 
 	bus = buss_stop.bus
 	stop = buss_stop.stop_id
 	#app.logger.debug("Getting log for %s, %s" % (bus, stop))
 	
-	request = "http://www.ctabustracker.com/bustime/api/v1/getpredictions?key=%s&rt=%s&stpid=%s" % (api_key,bus,stop)
+	request = "http://www.ctabustracker.com/bustime/api/v1/getpredictions?key=%s&rt=%s&stpid=%s" % (bus_api_key,bus,stop)
 
 	try:
 		response = urlopen(request)
@@ -63,6 +64,19 @@ def getTimes(buss_stop):
 	
 	#app.logger.debug("Got times for %s, %s: %s" % (bus, stop, prdtms))
 	return prdtms
+
+
+def getTrainTames(train_stop):
+	train = train_stop.line
+	stop = train_stop.platform_id
+
+	request = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&mapid=%s&max=5" % (train_api_key, stop)
+
+	prdtms = []
+
+	return prdtms
+
+
 
 def timeTilDepart(prdtm):
 	pieces = prdtm.split(" ")
@@ -117,24 +131,34 @@ def getBusses():
 
 	return busses
 
+def getTrains():
+	week_day = int(strftime("%w"))
+	hour = int(strftime("%H"))
+
+	trains = []
+
+
+	return trains
+
+
 @app.route('/')
 def show_home():	
 	current_time = strftime("%I:%M:%S")
 
 	busses = getBusses()
 	
-	results = []
+	bus_results = []
 	for bus_stop in busses:
-		prdtms = getTimes(bus_stop)
+		prdtms = getBusTimes(bus_stop)
 
 		bus_stop.prdtms = prdtms
 		#bus_stop['ttds'] = convertToMin(prdtms)
 
-		results.append(bus_stop)
+		bus_results.append(bus_stop)
 
 	
 
-	return render_template('show_main.html', current_time=current_time, results=results)
+	return render_template('show_main.html', current_time=current_time, bus_results=bus_results)
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__ == '__main__':

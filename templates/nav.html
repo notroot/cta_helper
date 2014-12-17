@@ -1,0 +1,10 @@
+{% block nav %}
+                        <h4>Time is {{current_time}}</h4>
+			<a class="btn btn-default btn-sm pull-right" href="javascript:location.reload(true)">
+				<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>Refresh 
+			</a>
+                        <ul id=tabNav class="nav nav-tabs">
+                                <li role="presentation" class="active"><a href="#busses" data-toggle="tab">Busses</a></li>
+                                <li role="presentation"><a href="#trains" data-toggle="tab">Trains</a></li>
+                        </ul>
+{% endblock nav %}

@@ -1,2 +1,2 @@
 [Options]
-api_key=[Your CTA API Key]
+bus_api_key=[Your CTA BusTracker API Key]

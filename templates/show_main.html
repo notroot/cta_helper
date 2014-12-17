@@ -1,25 +1,57 @@
 {% extends "layout.html" %}
 
-{% block main %}
-<strong>Time is {{current_time}}</strong>
-	{% for bus_stop in results %}
-	<table class="table">
-		<thead>
-			<tr>
-				<th colspan=2>{{ bus_stop.bus }} {{ bus_stop.name }} {{ bus_stop.direction }}</th>
-			</tr>
-			<tr>
-				<th>Minutes</th><th>Time</th>
-			</tr>
-		</thead>
-		<tbody>
-		{% for prdtm in bus_stop.prdtms %}		
-			<tr>
-				<td>{{ prdtm.minutes }}</td>
-				<td>{{ prdtm.prdtm }}</td>
-			</tr>
-		{% endfor %}
-		</tbody>
-	</table>
-	{% endfor %}
-{% endblock main %}
+{% block nav %}
+	{% include "nav.html" with context %}
+{% endblock nav %}
+
+{% block busses %}
+	<div id="tabContents" class="tab-content">
+		<div id="busses" class="tab-pane fade active in">
+			{% for bus_stop in bus_results %}
+			<table class="table">
+				<thead>
+					<tr>
+						<th colspan=2>{{ bus_stop.bus }} {{ bus_stop.name }} {{ bus_stop.direction }}</th>
+					</tr>
+					<tr>
+						<th>Minutes</th><th>Time</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for prdtm in bus_stop.prdtms %}		
+					<tr>
+						<td>{{ prdtm.minutes }}</td>
+						<td>{{ prdtm.prdtm }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+			{% endfor %}
+		</div>
+{% endblock busses %}
+
+{% block trains %}
+		<div id="trains" class="tab-pane fade in">
+			{% for bus_stop in bus_results %}
+			<table class="table">
+				<thead>
+					<tr>
+						<th colspan=2>TRAIN {{ bus_stop.bus }}</th>
+					</tr>
+					<tr>
+						<th>Minutes</th><th>Time</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for prdtm in bus_stop.prdtms %}		
+					<tr>
+						<td>{{ prdtm.minutes }}</td>
+						<td>{{ prdtm.prdtm }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock trains %}
