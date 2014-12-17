@@ -108,28 +108,28 @@ def convertToMin(prdtms):
 
 	return mins
 
-def getBusses():
+def getBuses():
 	week_day = int(strftime("%w"))
 	hour = int(strftime("%H"))
 	
-	busses = []
+	buses = []
 
 	# weekday morning
 	if (week_day > 0 and week_day < 6 and hour > 4 and hour < 12):
-		busses.append(BussStop("Sheridan & Surf", 156, 1076, "South"))
-		busses.append(BussStop("Sheridan & Surf", 134, 1076, "South"))
-		busses.append(BussStop("Diversey & Sheridan", 76, 11037, "West"))
+		buses.append(BussStop("Sheridan & Surf", 156, 1076, "South"))
+		buses.append(BussStop("Sheridan & Surf", 134, 1076, "South"))
+		buses.append(BussStop("Diversey & Sheridan", 76, 11037, "West"))
 	# weekday commute
 	elif (week_day > 0 and week_day < 6 and hour > 12 and hour < 19):
-		busses.append(BussStop("Jackson & River", 156, 14461, "North"))
-		busses.append(BussStop("Franklin & Jackson", 134, 6711, "North"))
-		busses.append(BussStop("Diversey & Brown Line", 76, 11028, "East"))
+		buses.append(BussStop("Jackson & River", 156, 14461, "North"))
+		buses.append(BussStop("Franklin & Jackson", 134, 6711, "North"))
+		buses.append(BussStop("Diversey & Brown Line", 76, 11028, "East"))
 	# weekday evening and weekend
 	else:	
-		busses.append(BussStop("Clark & Southport", 22, 14439, "South"))
-		busses.append(BussStop("Clack & Diversey", 22, 1917, "North"))
+		buses.append(BussStop("Clark & Southport", 22, 14439, "South"))
+		buses.append(BussStop("Clack & Diversey", 22, 1917, "North"))
 
-	return busses
+	return buses
 
 def getTrains():
 	week_day = int(strftime("%w"))
@@ -145,10 +145,10 @@ def getTrains():
 def show_home():	
 	current_time = strftime("%I:%M:%S")
 
-	busses = getBusses()
+	buses = getBuses()
 	
 	bus_results = []
-	for bus_stop in busses:
+	for bus_stop in buses:
 		prdtms = getBusTimes(bus_stop)
 
 		bus_stop.prdtms = prdtms

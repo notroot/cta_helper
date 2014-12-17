@@ -9,15 +9,17 @@
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
 	</head>
 	<body>
+	<div class="page-header">
+		<h1>CTA Helper</h1>
+	</div>
 	<div id="page_body" class="container">
 		<div class="row">
-			<h1>CTA Helper</h1>
-		</div>
-		<div class="row">
 			{% block nav %}{% endblock %}
-			{% block busses%}{% endblock %}
+			{% block buses%}{% endblock %}
 			{% block trains%}{% endblock %}
 		</div>
+
+
 	</div>
 	<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>

@@ -4,9 +4,9 @@
 	{% include "nav.html" with context %}
 {% endblock nav %}
 
-{% block busses %}
+{% block buses %}
 	<div id="tabContents" class="tab-content">
-		<div id="busses" class="tab-pane fade active in">
+		<div id="buses" class="tab-pane fade active in">
 			{% for bus_stop in bus_results %}
 			<table class="table">
 				<thead>
@@ -28,7 +28,7 @@
 			</table>
 			{% endfor %}
 		</div>
-{% endblock busses %}
+{% endblock buses %}
 
 {% block trains %}
 		<div id="trains" class="tab-pane fade in">

@@ -64,9 +64,9 @@ def timeTilDepart(prdtm):
 the_156 = getTimes(14461,156)
 the_134 = getTimes(6711,134)
 
-busses=[ {'bus':156,'stop':14461}, {'bus':134,'stop':6711}]
+buses=[ {'bus':156,'stop':14461}, {'bus':134,'stop':6711}]
 
-for bus_stop in busses:
+for bus_stop in buses:
 	bus = bus_stop['bus']
 	stop = bus_stop['stop']
 	prdtms = getTimes(stop,bus)
