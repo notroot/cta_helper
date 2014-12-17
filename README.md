@@ -1,3 +1,4 @@
+### CTA Helper
 CTA Helper is a tool for creating a single source for viewing your commute data in one view
 to help you decided between available routes. 
 
@@ -13,5 +14,5 @@ http://www.transitchicago.com/developers/alerts.aspx
  - Python
  - Pyton Flask
  - Optional
- -- Gunicorn
- -- Supervisor
+   - Gunicorn
+   - Supervisor
