@@ -1,2 +1,3 @@
 [Options]
 bus_api_key=[Your CTA BusTracker API Key]
+train_api_key=[Your CTA TrainTracker API Key]
