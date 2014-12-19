@@ -4,7 +4,7 @@ from urllib2 import Request, urlopen, URLError
 import xml.etree.ElementTree as ET
 import ConfigParser
 from datetime import datetime
-from time import gmtime, strftime
+from time import strftime, strptime, mktime, time
 
 # Flask imports
 from flask import Flask, request, session, g, redirect, url_for, \
@@ -44,8 +44,8 @@ def getBusTimes(buss_stop):
 	bus = buss_stop.bus
 	stop = buss_stop.stop_id
 	#app.logger.debug("Getting log for %s, %s" % (bus, stop))
-	
-	request = "http://www.ctabustracker.com/bustime/api/v1/getpredictions?key=%s&rt=%s&stpid=%s" % (bus_api_key,bus,stop)
+
+	request = "http://www.ctabustracker.com/bustime/api/v1/getpredictions?key=%s&rt=%s&stpid=%s&top=3" % (bus_api_key,bus,stop)
 
 	try:
 		response = urlopen(request)
@@ -60,7 +60,9 @@ def getBusTimes(buss_stop):
 		#print "Found a bus"
 		#ET.dump(atype)
 		prdtm = atype.find('prdtm').text
-		prdtms.append({'prdtm':prdtm,'minutes':timeTilDepart(prdtm)})
+		prdtm = strptime(prdtm, "%Y%m%d %H:%M") 
+		a_time = strftime("%H:%M", prdtm)
+		prdtms.append({'prdtm':prdtm,'minutes':timeTilDepart(prdtm), "a_time":a_time})
 	
 	#app.logger.debug("Got times for %s, %s: %s" % (bus, stop, prdtms))
 	return prdtms
@@ -77,29 +79,13 @@ def getTrainTames(train_stop):
 	return prdtms
 
 
-
 def timeTilDepart(prdtm):
-	pieces = prdtm.split(" ")
-	time = pieces[1]
+	seconds = mktime(prdtm) - time()
 
-	(hour, minute) = time.split(":")
-	hour = int(hour)
-	minute = int(minute)
-
-	now = datetime.now()
-
-	c_hour = now.hour
-	c_minute = now.minute
-
-	if ( c_hour == hour):
-		ttd =  minute - c_minute
-	else:
-		ttd =  (minute + 60) - c_minute
-
-	if ttd < 2:
+	if seconds < 120:
 		return "Due"
 	else:
-		return ttd
+		return int(seconds/60)
 
 def convertToMin(prdtms):
 	mins = []

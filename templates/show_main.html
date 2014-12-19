@@ -11,7 +11,7 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th colspan=2>{{ bus_stop.bus }} {{ bus_stop.name }} {{ bus_stop.direction }}</th>
+						<th colspan=2>{{ bus_stop.bus }}- {{ bus_stop.name }}- {{ bus_stop.direction }}</th>
 					</tr>
 					<tr>
 						<th>Minutes</th><th>Time</th>
@@ -21,7 +21,7 @@
 				{% for prdtm in bus_stop.prdtms %}		
 					<tr>
 						<td>{{ prdtm.minutes }}</td>
-						<td>{{ prdtm.prdtm }}</td>
+						<td>{{ prdtm.a_time }}</td>
 					</tr>
 				{% endfor %}
 				</tbody>
@@ -46,7 +46,7 @@
 				{% for prdtm in bus_stop.prdtms %}		
 					<tr>
 						<td>{{ prdtm.minutes }}</td>
-						<td>{{ prdtm.prdtm }}</td>
+						<td>{{ prdtm.a_time }}</td>
 					</tr>
 				{% endfor %}
 				</tbody>
