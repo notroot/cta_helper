@@ -61,7 +61,7 @@ def getBusTimes(buss_stop):
 		#ET.dump(atype)
 		prdtm = atype.find('prdtm').text
 		prdtm = strptime(prdtm, "%Y%m%d %H:%M") 
-		a_time = strftime("%H:%M", prdtm)
+		a_time = strftime("%I:%M", prdtm)
 		prdtms.append({'prdtm':prdtm,'minutes':timeTilDepart(prdtm), "a_time":a_time})
 	
 	#app.logger.debug("Got times for %s, %s: %s" % (bus, stop, prdtms))
@@ -136,11 +136,10 @@ def show_home():
 	bus_results = []
 	for bus_stop in buses:
 		prdtms = getBusTimes(bus_stop)
-
-		bus_stop.prdtms = prdtms
-		#bus_stop['ttds'] = convertToMin(prdtms)
-
-		bus_results.append(bus_stop)
+		
+		if (len(prdtms) > 0):
+			bus_stop.prdtms = prdtms
+			bus_results.append(bus_stop)
 
 	
 
