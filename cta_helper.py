@@ -39,6 +39,35 @@ class BussStop(object):
 		return '{} - {}, {}'.format(self.name, self.bus, self.stop_id)
 
 
+class TrainStop(object):
+	def __init__(self, platform_id, name=None, line=None, end_stop=None):
+		self.name = name
+		self.line = line
+		self.line_id = getLineID(line)
+		self.platform_id = platform_id
+		self.end_stop = end_stop
+		self.prdtms = None
+		
+	def __repr__(self):
+		return '{} - {}, {}'.format(self.name, self.line, self.end_stop)
+
+
+
+def getLineID(line):
+	#Red = Red Line (Howard-95th/Dan Ryan service)
+	#Blue = Blue Line (O'Hare-Forest Park service)
+	#Brn = Brown Line (Kimball-Loop service)
+	#G = Green Line (Harlem/Lake-Ashland/63rd-Cottage Grove service)
+	#Org = Orange Line (Midway-Loop service)
+	#P = Purple Line (Linden-Howard shuttle service)
+	#Pink = Pink Line (54th/Cermak-Loop service)
+	#Y = Yellow Line (Skokie-Howard [Skokie Swift] shuttle service)
+
+	lines = {"Red":"Red", "Blue":"Blue", "Brown":"Brn", "Green":"G", "Orange":"Org",\
+			"Purple":"P", "Pink":"Pink", "Yellow":"Y"}
+			
+	return lines[line]
+
 def getBusTimes(buss_stop):
 
 	bus = buss_stop.bus
@@ -68,20 +97,56 @@ def getBusTimes(buss_stop):
 	return prdtms
 
 
-def getTrainTames(train_stop):
-	train = train_stop.line
+def getTrainTimes(train_stop):
+	line = train_stop.line
 	stop = train_stop.platform_id
+	line_id=train_stop.line_id
 
-	request = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&mapid=%s&max=5" % (train_api_key, stop)
-
+	#request = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&stpid=%s&max=5" % (train_api_key, stop)
+	request = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&stpid=%s&rt=%s&max=5"\
+	 % (train_api_key, stop, line_id)
+	 
+	app.logger.debug("API query = %s" % request)
+	
+	try:
+		response = urlopen(request)
+		xml_response = response.read()
+		root = ET.fromstring(xml_response)
+	except URLError, e:
+		app.logger.debug('API error: Error code:', e)
+	
 	prdtms = []
+	for atype in root.findall('eta'):
+		is_delayed = atype.find('isDly').text
+		#is_delayed = "1"
+	
+		arrt = atype.find('arrT').text
+		arrt = strptime(arrt, "%Y%m%d %H:%M:%S") 
+		
+		# get the time that the arrival was estimated at so we can do the correct delta
+		estimated_at = atype.find('prdt').text
+		estimated_at = strptime(estimated_at, "%Y%m%d %H:%M:%S")
+		a_time = strftime("%I:%M", arrt)
+		
+		train_destination = atype.find('stpDe').text
+		prdtms.append({'prdtm':arrt,'minutes':timeTilDepart(arrt), "a_time":a_time,\
+		 "is_delayed":is_delayed, "train_destination":train_destination})
+
+	
 
 	return prdtms
 
 
-def timeTilDepart(prdtm):
-	seconds = mktime(prdtm) - time()
 
+# returns minutes until departure or "Due" if less than 2 minutes out
+# for train data sampled_at should be passed in what time the prediction was generated at
+# this provides a better prediction
+def timeTilDepart(prdtm, estimated_at=None):
+	if estimated_at == None:
+		seconds = mktime(prdtm) - time()
+	else:
+		seconds = mktime(prdtm) - estimated_at
+		
 	if seconds < 120:
 		return "Due"
 	else:
@@ -122,7 +187,14 @@ def getTrains():
 	hour = int(strftime("%H"))
 
 	trains = []
+	
+	#trains.append(TrainStop("Quincy", "Purple", 30007, "Kimbal"))
+	#trains.append(TrainStop("Diversey", "Brown", 30104, "Loop"))
+	#def __init__(self, platform_id, name=None, line=None, end_stop=None):
 
+	#trains.append(TrainStop(30007, None, "Purple"))
+	trains.append(TrainStop(30104, None, "Brown"))
+	trains.append(TrainStop(30282, None, "Brown", "South"))
 
 	return trains
 
@@ -140,10 +212,18 @@ def show_home():
 		if (len(prdtms) > 0):
 			bus_stop.prdtms = prdtms
 			bus_results.append(bus_stop)
-
+			
+	trains = getTrains()
 	
+	train_results = []
+	for train_stop in trains:
+		prdtms = getTrainTimes(train_stop)
+			
+		train_stop.prdtms = prdtms
+		train_results.append(train_stop)
 
-	return render_template('show_main.html', current_time=current_time, bus_results=bus_results)
+
+	return render_template('show_main.html', current_time=current_time, bus_results=bus_results, train_results=train_results)
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__ == '__main__':
