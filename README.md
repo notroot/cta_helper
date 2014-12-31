@@ -12,7 +12,7 @@ http://www.transitchicago.com/developers/alerts.aspx
 
 ### Required Tools
  - Python
- - Pyton Flask
+ - Python Flask
  - Optional
    - Gunicorn
    - Supervisor

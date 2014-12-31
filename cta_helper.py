@@ -193,8 +193,18 @@ def getTrains():
 	#def __init__(self, platform_id, name=None, line=None, end_stop=None):
 
 	#trains.append(TrainStop(30007, None, "Purple"))
-	trains.append(TrainStop(30104, None, "Brown"))
-	trains.append(TrainStop(30282, None, "Brown", "South"))
+	# weekday morning
+	if (week_day > 0 and week_day < 6 and hour > 4 and hour < 12):
+		trains.append(TrainStop(30104, "Diversy", "Brown"))
+		trains.append(TrainStop(30282, "Irving Park", "Brown"))
+	# weekday commute
+	elif (week_day > 0 and week_day < 6 and hour > 12 and hour < 19):
+		trains.append(TrainStop(30007, "Quincy/Wells", "Purple"))
+		trains.append(TrainStop(30008, "Quincy/Wells", "Brown"))
+	else:
+		trains.append(TrainStop(30104, "Diversy", "Brown"))
+		trains.append(TrainStop(30282, "Irving Park", "Brown")) 
+
 
 	return trains
 
@@ -218,9 +228,10 @@ def show_home():
 	train_results = []
 	for train_stop in trains:
 		prdtms = getTrainTimes(train_stop)
-			
-		train_stop.prdtms = prdtms
-		train_results.append(train_stop)
+	
+		if (len(prdtms) > 0):		
+			train_stop.prdtms = prdtms
+			train_results.append(train_stop)
 
 
 	return render_template('show_main.html', current_time=current_time, bus_results=bus_results, train_results=train_results)
