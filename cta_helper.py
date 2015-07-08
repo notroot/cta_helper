@@ -8,14 +8,14 @@ from time import strftime, strptime, mktime, time
 
 # Flask imports
 from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash
+	 abort, render_template, flash
 from werkzeug.contrib.fixers import ProxyFix
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
-        DEBUG=True,
+		DEBUG=True,
 ))
 
 config = ConfigParser.RawConfigParser()
@@ -34,7 +34,7 @@ class BussStop(object):
 		self.direction = direction
 		self.prdtms = None
 
-		
+
 	def __repr__(self):
 		return '{} - {}, {}'.format(self.name, self.bus, self.stop_id)
 
@@ -47,7 +47,7 @@ class TrainStop(object):
 		self.platform_id = platform_id
 		self.end_stop = end_stop
 		self.prdtms = None
-		
+
 	def __repr__(self):
 		return '{} - {}, {}'.format(self.name, self.line, self.end_stop)
 
@@ -65,7 +65,7 @@ def getLineID(line):
 
 	lines = {"Red":"Red", "Blue":"Blue", "Brown":"Brn", "Green":"G", "Orange":"Org",\
 			"Purple":"P", "Pink":"Pink", "Yellow":"Y"}
-			
+
 	return lines[line]
 
 def getBusTimes(buss_stop):
@@ -89,10 +89,10 @@ def getBusTimes(buss_stop):
 		#print "Found a bus"
 		#ET.dump(atype)
 		prdtm = atype.find('prdtm').text
-		prdtm = strptime(prdtm, "%Y%m%d %H:%M") 
+		prdtm = strptime(prdtm, "%Y%m%d %H:%M")
 		a_time = strftime("%I:%M", prdtm)
 		prdtms.append({'prdtm':prdtm,'minutes':timeTilDepart(prdtm), "a_time":a_time})
-	
+
 	#app.logger.debug("Got times for %s, %s: %s" % (bus, stop, prdtms))
 	return prdtms
 
@@ -105,34 +105,34 @@ def getTrainTimes(train_stop):
 	#request = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&stpid=%s&max=5" % (train_api_key, stop)
 	request = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&stpid=%s&rt=%s&max=5"\
 	 % (train_api_key, stop, line_id)
-	 
+
 	app.logger.debug("API query = %s" % request)
-	
+
 	try:
 		response = urlopen(request)
 		xml_response = response.read()
 		root = ET.fromstring(xml_response)
 	except URLError, e:
 		app.logger.debug('API error: Error code:', e)
-	
+
 	prdtms = []
 	for atype in root.findall('eta'):
 		is_delayed = atype.find('isDly').text
 		#is_delayed = "1"
-	
+
 		arrt = atype.find('arrT').text
-		arrt = strptime(arrt, "%Y%m%d %H:%M:%S") 
-		
+		arrt = strptime(arrt, "%Y%m%d %H:%M:%S")
+
 		# get the time that the arrival was estimated at so we can do the correct delta
 		estimated_at = atype.find('prdt').text
 		estimated_at = strptime(estimated_at, "%Y%m%d %H:%M:%S")
 		a_time = strftime("%I:%M", arrt)
-		
+
 		train_destination = atype.find('stpDe').text
 		prdtms.append({'prdtm':arrt,'minutes':timeTilDepart(arrt), "a_time":a_time,\
 		 "is_delayed":is_delayed, "train_destination":train_destination})
 
-	
+
 
 	return prdtms
 
@@ -146,7 +146,7 @@ def timeTilDepart(prdtm, estimated_at=None):
 		seconds = mktime(prdtm) - time()
 	else:
 		seconds = mktime(prdtm) - estimated_at
-		
+
 	if seconds < 120:
 		return "Due"
 	else:
@@ -159,35 +159,45 @@ def convertToMin(prdtms):
 
 	return mins
 
-def getBuses():
+def getBuses(user=None):
 	week_day = int(strftime("%w"))
 	hour = int(strftime("%H"))
-	
+
 	buses = []
 
 	# weekday morning
 	if (week_day > 0 and week_day < 6 and hour > 4 and hour < 12):
-		buses.append(BussStop("Sheridan & Surf", 156, 1076, "South"))
-		buses.append(BussStop("Sheridan & Surf", 134, 1076, "South"))
-		buses.append(BussStop("Diversey & Sheridan", 76, 11037, "West"))
+		if user == "carrie":
+			buses.append(BussStop("Clark & Southport", 22, 14439, "South"))
+			buses.append(BussStop("Sheridan & Surf", 134, 1076, "South"))
+		else:
+			buses.append(BussStop("Sheridan & Surf", 134, 1076, "South"))
+			buses.append(BussStop("Sheridan & Surf", 156, 1076, "South"))
+			buses.append(BussStop("Diversey & Sheridan", 76, 11037, "West"))
+
 	# weekday commute
 	elif (week_day > 0 and week_day < 6 and hour > 12 and hour < 19):
-		buses.append(BussStop("Jackson & River", 156, 14461, "North"))
-		buses.append(BussStop("Franklin & Jackson", 134, 6711, "North"))
-		buses.append(BussStop("Diversey & Brown Line", 76, 11028, "East"))
+		if user == "carrie":
+			buses.append(BussStop("LaSelle & Randolph", 134, 4975, "North"))
+			buses.append(BussStop("LaSelle & Randolph", 156, 4975, "North"))
+		else:
+			buses.append(BussStop("Franklin & Jackson", 134, 6711, "North"))
+			buses.append(BussStop("Jackson & River", 156, 14461, "North"))
+			buses.append(BussStop("Diversey & Brown Line", 76, 11028, "East"))
+
 	# weekday evening and weekend
-	else:	
+	else:
 		buses.append(BussStop("Clark & Southport", 22, 14439, "South"))
 		buses.append(BussStop("Clack & Diversey", 22, 1917, "North"))
 
 	return buses
 
-def getTrains():
+def getTrains(user=None):
 	week_day = int(strftime("%w"))
 	hour = int(strftime("%H"))
 
 	trains = []
-	
+
 	#trains.append(TrainStop("Quincy", "Purple", 30007, "Kimbal"))
 	#trains.append(TrainStop("Diversey", "Brown", 30104, "Loop"))
 	#def __init__(self, platform_id, name=None, line=None, end_stop=None):
@@ -195,41 +205,58 @@ def getTrains():
 	#trains.append(TrainStop(30007, None, "Purple"))
 	# weekday morning
 	if (week_day > 0 and week_day < 6 and hour > 4 and hour < 12):
-		trains.append(TrainStop(30104, "Diversy", "Brown"))
-		trains.append(TrainStop(30282, "Irving Park", "Brown"))
+		if user == "carrie":
+			trains.append(TrainStop(30282, "Irving Park", "Brown"))
+		else:
+			trains.append(TrainStop(30104, "Diversy", "Brown"))
+			trains.append(TrainStop(30282, "Irving Park", "Brown"))
 	# weekday commute
 	elif (week_day > 0 and week_day < 6 and hour > 12 and hour < 19):
-		trains.append(TrainStop(30007, "Quincy/Wells", "Purple"))
-		trains.append(TrainStop(30008, "Quincy/Wells", "Brown"))
+		if user == "carrie":
+			trains.append(TrainStop(30075, "Clark/Lake", "Brown"))
+			trains.append(TrainStop(30142, "Washington/Wells", "Brown"))
+			trains.append(TrainStop(30211, "Monroe", "Red"))
+		else:
+			trains.append(TrainStop(30007, "Quincy/Wells", "Purple"))
+			trains.append(TrainStop(30008, "Quincy/Wells", "Brown"))
 	else:
 		trains.append(TrainStop(30104, "Diversy", "Brown"))
-		trains.append(TrainStop(30282, "Irving Park", "Brown")) 
+		trains.append(TrainStop(30282, "Irving Park", "Brown"))
 
 
 	return trains
 
+def validateUser(user):
+	if user == "carrie" or user == "jim":
+		return True
+	else:
+		return False
 
 @app.route('/')
-def show_home():	
+@app.route('/u/<user>')
+def show_home(user=None):
 	current_time = strftime("%I:%M:%S")
 
-	buses = getBuses()
-	
+	if not validateUser(user):
+		redirect(request.base_url)
+
+	buses = getBuses(user)
+
 	bus_results = []
 	for bus_stop in buses:
 		prdtms = getBusTimes(bus_stop)
-		
+
 		if (len(prdtms) > 0):
 			bus_stop.prdtms = prdtms
 			bus_results.append(bus_stop)
-			
-	trains = getTrains()
-	
+
+	trains = getTrains(user)
+
 	train_results = []
 	for train_stop in trains:
 		prdtms = getTrainTimes(train_stop)
-	
-		if (len(prdtms) > 0):		
+
+		if (len(prdtms) > 0):
 			train_stop.prdtms = prdtms
 			train_results.append(train_stop)
 
@@ -238,4 +265,4 @@ def show_home():
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+	app.run(host='0.0.0.0')
