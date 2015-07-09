@@ -4,24 +4,23 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>CTA Helper</title>	
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
+		<title>CTA Helper</title>
+		<link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.indigo-pink.min.css">
+		<script src="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.min.js"></script>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<style>
+			#time {
+			position: absolute;
+			right: 4em;
+			top: 1em;
+			}
+		</style>
 	</head>
 	<body>
-	<div class="page-header">
-		<h1>CTA Helper</h1>
-	</div>
-	<div id="page_body" class="container">
-		<div class="row">
+	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 			{% block nav %}{% endblock %}
 			{% block buses%}{% endblock %}
 			{% block trains%}{% endblock %}
-		</div>
-
-
 	</div>
-	<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-	<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 	</body>
 </html>

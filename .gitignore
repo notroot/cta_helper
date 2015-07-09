@@ -1,3 +1,4 @@
 cta.cfg
 venv
 static/fonts
+static/js/*.js

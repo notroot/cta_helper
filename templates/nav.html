@@ -1,10 +1,16 @@
 {% block nav %}
-                        <h4>Time is {{current_time}}</h4>
-			<a class="btn btn-default btn-sm pull-right" href="javascript:location.reload(true)">
-				<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>Refresh 
-			</a>
-                        <ul id=tabNav class="nav nav-pills">
-                                <li role="presentation" class="active"><a href="#buses" data-toggle="tab">Buses</a></li>
-                                <li role="presentation"><a href="#trains" data-toggle="tab">Trains</a></li>
-			</ul>
+  <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
+    <div class="mdl-layout--large-screen-only mdl-layout__header-row">
+    </div>
+    <div class="mdl-layout__header-row">
+      <!-- Title -->
+      <h3>CTA Helper</h3>
+    </div>
+    <!-- Tabs -->
+    <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+      <a href="#scroll-tab-buses" class="mdl-layout__tab is-active">Buses</a>
+      <a href="#scroll-tab-trains" class="mdl-layout__tab">Trains</a>
+      <span id=time>{{current_time}}</span>
+    </div>
+  </header>
 {% endblock nav %}

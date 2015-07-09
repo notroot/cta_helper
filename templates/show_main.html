@@ -5,60 +5,69 @@
 {% endblock nav %}
 
 {% block buses %}
-	<div id="tabContents" class="tab-content">
-		<div id="buses" class="tab-pane fade active in">
-			{% for bus_stop in bus_results %}
-			<table class="table">
-				<thead>
-					<tr>
-						<th colspan=2>{{ bus_stop.bus }}- {{ bus_stop.name }}- {{ bus_stop.direction }}</th>
-					</tr>
-					<tr>
-						<th>Minutes</th><th>Time</th>
-					</tr>
-				</thead>
-				<tbody>
-				{% for prdtm in bus_stop.prdtms %}		
-					<tr>
-						<td>{{ prdtm.minutes }}</td>
-						<td>{{ prdtm.a_time }}</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-			{% endfor %}
-		</div>
+  <main class="mdl-layout__content">
+		 <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp mdl-layout__tab-panel is-active" id="scroll-tab-buses">
+			<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+				<div class="mdl-card__supporting-text">
+					{% for bus_stop in bus_results %}
+					<h4>{{ bus_stop.bus }}- {{ bus_stop.name }}- {{ bus_stop.direction }}</h4>
+						<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+							<thead>
+								<tr>
+									<th>Minutes</th><th>Time</th>
+								</tr>
+							</thead>
+							<tbody>
+							{% for prdtm in bus_stop.prdtms %}
+								<tr>
+									<td class="mdl-data-table__cell--non-numeric">{{ prdtm.minutes }}</td>
+									<td class="mdl-data-table__cell--non-numeric">{{ prdtm.a_time }}</td>
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+					{% endfor %}
+				</div>
+			</div>
+		</section>
 {% endblock buses %}
 
 {% block trains %}
-		<div id="trains" class="tab-pane fade in">
-			{% for train_stop in train_results %}
-			<table class="table">
-				<thead>
-					<tr>
-						<th colspan=3>{{train_stop.line}} {{train_stop.name}} </th>
-					</tr>
-					<tr>
-						<th>Minutes</th><th>Time</th><th>Destination</th>
-					</tr>
-				</thead>
-				<tbody>
-				{% for prdtm in train_stop.prdtms %}		
-					<tr>
-					{% if prdtm.is_delayed == '1' %}
-						<td><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+		<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp mdl-layout__tab-panel" id="scroll-tab-trains">
+			<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+				<div class="mdl-card__supporting-text">
+				{% for train_stop in train_results %}
+				<h4>{{train_stop.line}} {{train_stop.name}}</h4>
+					<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+						<thead>
+							<tr>
+								<th>Minutes</th><th>Time</th><th>Destination</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for prdtm in train_stop.prdtms %}
+							<tr>
+							{% if prdtm.is_delayed == '1' %}
+							<td><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 							{{ prdtm.minutes }}
-						</td>
-					{% else %}
-						<td>{{ prdtm.minutes }}</td>
-					{% endif %}
-						<td>{{ prdtm.a_time }}</td>
-						<td>{{ prdtm.train_destination }} </td>
-					</tr>
+							</td>
+							{% else %}
+							<td>{{ prdtm.minutes }}</td>
+							{% endif %}
+							<td>{{ prdtm.a_time }}</td>
+							<td>{{ prdtm.train_destination }} </td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
 				{% endfor %}
-				</tbody>
-			</table>
-			{% endfor %}
+				</div>
+			</div>
+		</section>
+		<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+			<a class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" href="javascript:location.reload(true)">
+				Refresh
+			</a>
 		</div>
-	</div>
+	</main>
 {% endblock trains %}
