@@ -13,6 +13,7 @@ from werkzeug.contrib.fixers import ProxyFix
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+app.secret_key = 'some_secret'
 
 app.config.update(dict(
 		DEBUG=True,
@@ -95,6 +96,34 @@ def getBusTimes(buss_stop):
 
 	#app.logger.debug("Got times for %s, %s: %s" % (bus, stop, prdtms))
 	return prdtms
+
+
+def getBusesByStopID(stop_id):
+
+	request = "http://www.ctabustracker.com/bustime/api/v1/getpredictions?key=%s&stpid=%s&top=4" % (bus_api_key, stop_id)
+
+	try:
+		response = urlopen(request)
+		xml_response = response.read()
+		root = ET.fromstring(xml_response)
+	except URLError, e:
+		print 'API error: Error code:', e
+
+	arivals = []
+	for atype in root.findall('prd'):
+		prdtm = atype.find('prdtm').text
+		prdtm = strptime(prdtm, "%Y%m%d %H:%M")
+		a_time = strftime("%I:%M", prdtm)
+		prdtm = {'prdtm':prdtm,'minutes':timeTilDepart(prdtm), "a_time":a_time}
+
+
+		stpnm = atype.find('stpnm').text
+		rt = int(atype.find('rt').text)
+		rtdir = atype.find('rtdir').text
+
+		arivals.append({'stpnm':stpnm,'rt':rt,'rtdir':rtdir,'prdtm':prdtm})
+
+	return arivals
 
 
 def getTrainTimes(train_stop):
@@ -262,6 +291,23 @@ def show_home(user=None):
 
 
 	return render_template('show_main.html', current_time=current_time, bus_results=bus_results, train_results=train_results)
+
+@app.route('/stop')
+def show_busstop():
+	current_time = strftime("%I:%M:%S")
+
+	stop_id = request.values['stop_id']
+
+	try:
+		stop_id = int(stop_id)
+	except ValueError:
+		flash("Stop ID must be a numeric value")
+		return render_template('show_stop.html', current_time=current_time, arivals=None)
+
+	arivals = getBusesByStopID(stop_id)
+
+	return render_template('show_stop.html', current_time=current_time, arivals=arivals)
+
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__ == '__main__':

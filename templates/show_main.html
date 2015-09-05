@@ -29,7 +29,20 @@
 					{% endfor %}
 				</div>
 			</div>
-		</section>
+		<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+			<div class="mdl-card__supporting-text">
+				<form action="/stop" method="get">
+					<h6>Enter Stop:</h6>
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="number" name="stop_id" pattern="-?[0-9]*(\.[0-9]+)?" id="stop_id" />
+						<label class="mdl-textfield__label" for="stop_id">Stop ID</label>
+						<span class="mdl-textfield__error">Input is not a number!</span>
+						<input type="submit" value="Go">
+					</div>
+				</form>
+			</div>
+		</div>
+	</section>
 {% endblock buses %}
 
 {% block trains %}

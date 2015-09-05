@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block nav %}
+	{% include "nav.html" with context %}
+{% endblock nav %}
+
+{% block buses %}
+  <main class="mdl-layout__content">
+		{% with messages = get_flashed_messages() %}
+		  {% if messages %}
+			<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+				<h3>Error:</h3>
+		    {% for message in messages %}
+		    	{{ message }}
+		    {% endfor %}
+			</div>
+		  {% endif %}
+		{% endwith %}
+		 <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp mdl-layout__tab-panel is-active" id="scroll-tab-buses">
+			<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+				{% if arivals %}
+				<div class="mdl-card__supporting-text">
+					<h4>Showing arivals for a single stop</h4>
+						<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+							<thead>
+								<tr>
+									<th>Bus</th><th>Minutes</th><th>Time</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for bus in arivals %}
+								<tr>
+									<td class="mdl-data-table__cell--non-numeric">{{ bus.rt}}</td>
+									<td class="mdl-data-table__cell--non-numeric">{{ bus.prdtm.minutes }}</td>
+									<td class="mdl-data-table__cell--non-numeric">{{ bus.prdtm.a_time }}</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+				</div>
+				{% endif %}
+			</div>
+		</section>
+		<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+			<a class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" href="/">
+				Back
+			</a>
+		</div>
+	</main>
+{% endblock buses %}
