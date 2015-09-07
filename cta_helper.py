@@ -120,8 +120,8 @@ def getBusesByStopID(stop_id):
 		stpnm = atype.find('stpnm').text
 		rt = int(atype.find('rt').text)
 		rtdir = atype.find('rtdir').text
-
-		arivals.append({'stpnm':stpnm,'rt':rt,'rtdir':rtdir,'prdtm':prdtm})
+		des = atype.find('des').text
+		arivals.append({'stpnm':stpnm,'rt':rt,'rtdir':rtdir,'prdtm':prdtm,'des':des})
 
 	return arivals
 
@@ -305,8 +305,13 @@ def show_busstop():
 		return render_template('show_stop.html', current_time=current_time, arivals=None)
 
 	arivals = getBusesByStopID(stop_id)
+	if arivals:
+		# use name from first arival, they will all have the same stop name
+		stop = arivals[0]['stpnm']
+	else:
+		stop = None
 
-	return render_template('show_stop.html', current_time=current_time, arivals=arivals)
+	return render_template('show_stop.html', current_time=current_time, stop=stop, arivals=arivals)
 
 
 app.wsgi_app = ProxyFix(app.wsgi_app)

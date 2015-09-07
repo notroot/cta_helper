@@ -18,13 +18,13 @@
 		{% endwith %}
 		 <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp mdl-layout__tab-panel is-active" id="scroll-tab-buses">
 			<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
-				{% if arivals %}
+				{% if stop %}
 				<div class="mdl-card__supporting-text">
-					<h4>Showing arivals for a single stop</h4>
+					<h4>{{ stop }}</h4>
 						<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
 							<thead>
 								<tr>
-									<th>Bus</th><th>Minutes</th><th>Time</th>
+									<th>Bus</th><th>Minutes</th><th>Time</th><th>Destination</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -33,6 +33,7 @@
 									<td class="mdl-data-table__cell--non-numeric">{{ bus.rt}}</td>
 									<td class="mdl-data-table__cell--non-numeric">{{ bus.prdtm.minutes }}</td>
 									<td class="mdl-data-table__cell--non-numeric">{{ bus.prdtm.a_time }}</td>
+									<td class="mdl-data-table__cell--non-numeric">{{ bus.des }}</td>
 								</tr>
 								{% endfor %}
 							</tbody>
