@@ -197,8 +197,9 @@ def getBuses(user=None):
 	# weekday morning
 	if (week_day > 0 and week_day < 6 and hour > 4 and hour < 12):
 		if user == "carrie":
-			buses.append(BussStop("Clark & Southport", 22, 14439, "South"))
 			buses.append(BussStop("Sheridan & Surf", 134, 1076, "South"))
+			buses.append(BussStop("Sheridan & Surf", 156, 1076, "South"))
+			buses.append(BussStop("Diversey & Sheridan", 76, 11037, "West"))
 		else:
 			buses.append(BussStop("Sheridan & Surf", 134, 1076, "South"))
 			buses.append(BussStop("Sheridan & Surf", 156, 1076, "South"))
@@ -217,7 +218,7 @@ def getBuses(user=None):
 	# weekday evening and weekend
 	else:
 		buses.append(BussStop("Clark & Southport", 22, 14439, "South"))
-		buses.append(BussStop("Clack & Diversey", 22, 1917, "North"))
+		buses.append(BussStop("Clark & Diversey", 22, 1917, "North"))
 
 	return buses
 
@@ -235,7 +236,8 @@ def getTrains(user=None):
 	# weekday morning
 	if (week_day > 0 and week_day < 6 and hour > 4 and hour < 12):
 		if user == "carrie":
-			trains.append(TrainStop(30282, "Irving Park", "Brown"))
+			trains.append(TrainStop(30104, "Diversy", "Brown"))
+			trains.append(TrainStop(30104, "Diversy", "Purple"))
 		else:
 			trains.append(TrainStop(30104, "Diversy", "Brown"))
 			trains.append(TrainStop(30282, "Irving Park", "Brown"))
@@ -243,7 +245,7 @@ def getTrains(user=None):
 	elif (week_day > 0 and week_day < 6 and hour > 12 and hour < 19):
 		if user == "carrie":
 			trains.append(TrainStop(30075, "Clark/Lake", "Brown"))
-			trains.append(TrainStop(30142, "Washington/Wells", "Brown"))
+			trains.append(TrainStop(30141, "Washington/Wells", "Purple"))
 			trains.append(TrainStop(30211, "Monroe", "Red"))
 		else:
 			trains.append(TrainStop(30007, "Quincy/Wells", "Purple"))
