@@ -210,6 +210,7 @@ def getBuses(user=None):
 		if user == "carrie":
 			buses.append(BussStop("LaSelle & Randolph", 134, 4975, "North"))
 			buses.append(BussStop("LaSelle & Randolph", 156, 4975, "North"))
+			buses.append(BussStop("Diversey & Brown Line", 76, 11028, "East"))
 		else:
 			buses.append(BussStop("Franklin & Jackson", 134, 6711, "North"))
 			buses.append(BussStop("Jackson & River", 156, 14461, "North"))
