@@ -135,7 +135,7 @@ def getTrainTimes(train_stop):
 	request = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&stpid=%s&rt=%s&max=5"\
 	 % (train_api_key, stop, line_id)
 
-	app.logger.debug("API query = %s" % request)
+	#app.logger.debug("API query = %s" % request)
 
 	try:
 		response = urlopen(request)
@@ -218,8 +218,10 @@ def getBuses(user=None):
 
 	# weekday evening and weekend
 	else:
-		buses.append(BussStop("Clark & Southport", 22, 14439, "South"))
+		buses.append(BussStop("Sheridan & Surf", 77, 1149, "West"))
+		buses.append(BussStop("Sheridan & Surf", 151, 1149, "West"))
 		buses.append(BussStop("Clark & Diversey", 22, 1917, "North"))
+		buses.append(BussStop("Clark & Diversey", 22, 1832, "South"))
 
 	return buses
 
